@@ -59,6 +59,9 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 import math
 
+
+
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure key
 
@@ -66,6 +69,7 @@ app.secret_key = 'your_secret_key'  # Replace with a secure key
 client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB connection string
 db = client['myDatabase']  # Replace with your database name
 users_collection = db['users']  # Replace with your collection name
+segregation_guide_collection = db["segregation_guide"]
 
 @app.route('/')
 def home():
@@ -86,6 +90,8 @@ def login():
             return redirect(url_for('home'))
         return 'Invalid credentials', 401
     return render_template('login.html')
+
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -333,5 +339,66 @@ def centers_view():
 
 
 
+@app.route('/segregation-guide', methods=['GET', 'POST'])
+def segregation_guide():
+    if 'email' in session:  # Ensure user is logged in
+        response = None
+        if request.method == 'POST':
+            item = request.form['item'].strip().lower()
+
+            # Check the database for the item
+            data = segregation_guide_collection.find_one({"item": item})
+            if data:
+                response = f"{item.capitalize()} is {data['category']}.\nSolution: {data['solution']}"
+            else:
+                response = f"Sorry, we don't have information about '{item}' yet."
+
+        return render_template('segregation_guide.html', response=response)
+
+    return redirect(url_for('login'))
+
+
+import matplotlib.pyplot as plt
+import io
+import base64
+
+@app.route('/waste-comparison')
+def waste_comparison():
+    users = list(users_collection.find({}, {'name': 1, 'non_bio_waste': 1}))
+    
+    if not users:
+        return "No data available to display."
+
+    users_sorted = sorted(users, key=lambda x: x.get('non_bio_waste', 0))
+    
+    names = [user['name'] for user in users_sorted]
+    non_bio_waste = [user.get('non_bio_waste', 0) for user in users_sorted]
+
+    # Create bar chart
+    plt.figure(figsize=(10, 5))
+    plt.barh(names, non_bio_waste, color='green')
+    plt.xlabel("Non-Biodegradable Waste (kg)")
+    plt.ylabel("Users")
+    plt.title("Users with Less Non-Biodegradable Waste")
+    plt.gca().invert_yaxis()  # Invert y-axis to show lowest first
+
+    # Convert plot to image
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()
+
+    return render_template('waste_comparison.html', plot_url=plot_url)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
