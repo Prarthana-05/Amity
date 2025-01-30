@@ -1,0 +1,18 @@
+<form method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="{{ user.name }}" required><br>
+
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location" value="{{ user.location }}" required><br>
+
+    <label for="bio_waste">Biodegradable Waste (kg):</label>
+    <input type="number" id="bio_waste" name="bio_waste" value="{{ user.bio_waste or 0 }}" required><br>
+
+    <label for="non_bio_waste">Non-Biodegradable Waste (kg):</label>
+    <input type="number" id="non_bio_waste" name="non_bio_waste" value="{{ user.non_bio_waste or 0 }}" required><br>
+
+    <label for="participated_events">Participated Events:</label>
+    <input type="text" id="participated_events" name="participated_events" value="{{ user.participated_events or '' }}" required><br>
+
+    <button type="submit">Update</button>
+</form>

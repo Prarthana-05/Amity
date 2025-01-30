@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Information</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h2>Update Your Information</h2>
+    <form method="POST">
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="{{ user_email }}" required><br>
+
+        <label for="location">Location:</label>
+        <input type="text" name="location" value="{{ user_location }}" required><br>
+
+        <button type="submit">Update</button>
+    </form>
+    <a href="/admin/dashboard">Back to Admin Dashboard</a>
+</body>
+</html>

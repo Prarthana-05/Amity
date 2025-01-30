@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Events</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h2>Upcoming Cleanup Events</h2>
+    <p>Here are some events near your location:</p>
+    <ul>
+        {% for event in events %}
+            <li>
+                <strong>{{ event.name }}</strong> - {{ event.date }}<br>
+                <em>Location: {{ event.location }}</em><br>
+                <a href="#">RSVP</a>
+            </li>
+        {% else %}
+            <li>No events available at the moment.</li>
+        {% endfor %}
+    </ul>
+    <a href="/user/dashboard">Back to Dashboard</a>
+</body>
+</html>
